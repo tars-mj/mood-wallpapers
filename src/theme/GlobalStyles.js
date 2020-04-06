@@ -16,7 +16,7 @@ const GlobalStyle = createGlobalStyle`
 
   body {
     font-size: 1.6rem;
-		font-family: "Roboto", sans-serif;
+		font-family: 'Montserrat', sans-serif;
 		
 		margin: 0;
 		padding: 0;
@@ -59,7 +59,7 @@ const GlobalStyle = createGlobalStyle`
 	}
 
 	.activeBtn {
-		background-color: ${theme.blackHover};
+		background-color: ${theme.brown2};
 	}
 `;
 
