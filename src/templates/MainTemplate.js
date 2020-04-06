@@ -10,9 +10,9 @@ const MainTemplate = ({ children }) => (
     <GlobalStyles />
     <Helmet>
       <link
-        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;300;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,300;0,700;1,200&display=swap"
         rel="stylesheet"
-      ></link>
+      />
     </Helmet>
     <ThemeProvider theme={theme}>{children}</ThemeProvider>
   </>

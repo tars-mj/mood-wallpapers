@@ -20,7 +20,7 @@ const StyledBoardLayout = styled.div`
   grid-template-areas:
     'menu'
     'main';
-  grid-gap: 10px;
+  grid-gap: 4px;
   background-color: ${({ theme }) => theme.brown1};
 `;
 
@@ -29,9 +29,9 @@ const StyledMenu = styled.div`
 
   background-color: ${({ theme }) => theme.brown1};
   display: grid;
-  grid-template-columns: 60px 60px 300px 1fr;
+  grid-template-columns: 60px 60px 1fr;
   grid-template-rows: 1fr;
-  grid-template-areas: 'btn1 btn2 search .';
+  grid-template-areas: 'btn1 btn2 tags';
 `;
 
 const ButtonMenu = styled.div`
@@ -52,43 +52,36 @@ const ButtonMenu = styled.div`
   }
 `;
 
-// const badgeKeys = keyframes`
-// 	0% {
-//     transform: scale(1);
-//   }
-
-// 	50% {
-// 		transform: scale(2);
-// 	}
-
-//   100% {
-//     transform: scale(1);
-//   }
-// `;
-// animation: ${badgeKeys} 0.3s ease-in-out;
-
 const Badge = styled.div`
   position: absolute;
   width: 25px;
   height: 20px;
   border-radius: 20px;
   background-color: ${({ theme }) => theme.red};
-  top: 14px;
-  left: 8px;
+  top: 5px;
+  right: 0px;
   font-size: 1rem;
   font-weight: ${({ theme }) => theme.fontBold};
   color: ${({ theme }) => theme.white};
   text-align: center;
   line-height: 1.7;
+`;
 
-  @media (max-width: 768px) {
-    top: 24px;
-    left: 0px;
-  }
+const StyledTags = styled.div`
+  grid-area: tags;
+  display: flex;
+  padding-right: 20px;
+  color: ${({ theme }) => theme.brown3};
+  justify-content: flex-end;
+  align-items: center;
+  text-transform: capitalize;
+  font-family: 'Montserrat';
+
+  font-style: italic;
 `;
 
 const PageTemplate = ({ children, location }) => {
-  // const { pantry, shoppingList } = useContext(DataContext);
+  const { tags, favorites } = useContext(DataContext);
 
   return (
     <StyledBoardLayout>
@@ -97,9 +90,10 @@ const PageTemplate = ({ children, location }) => {
           <FontAwesomeIcon color={theme.brown3} icon={faHome} />
         </ButtonMenu>
         <ButtonMenu as={NavLink} to={routes.favorites} activeClassName="activeBtn" area="btn2">
-          <Badge>{2}</Badge>
+          {favorites.length !== 0 && <Badge>{favorites.length}</Badge>}
           <FontAwesomeIcon color={theme.brown3} icon={faHeart} />
         </ButtonMenu>
+        <StyledTags>{tags.length === 0 ? '...' : tags.join(', ')}</StyledTags>
       </StyledMenu>
       {children}
     </StyledBoardLayout>

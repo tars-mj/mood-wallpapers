@@ -1,12 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
+import { DataContext } from '../context/DataContext';
 import PageTemplate from '../templates/PageTemplate';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import axios from 'axios';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faImages, faSearch, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faImages, faSearch, faTimes, faHeart } from '@fortawesome/free-solid-svg-icons';
+import { faHeart as faHeartEmpty } from '@fortawesome/free-regular-svg-icons';
 import { theme } from '../theme/theme';
+import StyledItemHover from '../components/atoms/StyledItemHover';
+import StyledMansoryItem from '../components/atoms/StyledMansoryItem';
+import ButtonModal from '../components/atoms/ButtonModal';
+import Modal from '../components/atoms/Modal';
+import StyledInfo from '../components/atoms/StyledInfo';
 
 const StyledWrapper = styled.div`
   width: 100%;
@@ -14,37 +21,16 @@ const StyledWrapper = styled.div`
 `;
 
 const StyledMansory = styled.div`
-  display: flex;
-  flex-flow: column wrap;
-  height: 80vh;
-  margin-bottom: 5vh;
-  text-align: center;
-  text-transform: uppercase;
-  width: 90vw;
-`;
-
-const StyledMansoryItem = styled.div`
-  width: 100px;
-  height: 100px;
-  background-color: red;
-`;
-
-const Modal = styled.div`
-  z-index: 2;
-  background-color: black;
-  padding: 10px;
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(255, 255, 255, 0.1);
-  backdrop-filter: grayscale(1) blur(2px);
-
-  z-index: 2;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-gap: 4px;
+  grid-auto-columns: 1fr;
+  grid-auto-rows: 1fr;
+  grid-template-areas:
+    'a b b c'
+    'd d e c'
+    'd d f f';
 `;
 
 const StyledWrapperInput = styled.div`
@@ -77,67 +63,121 @@ const ButtonAdd = styled.button`
 `;
 
 const options = [
-  { value: 'chocolate', label: 'Chocolate' },
-  { value: 'strawberry', label: 'Strawberry' },
-  { value: 'vanilla', label: 'Vanilla' },
+  { value: 'morning', label: 'Morning' },
+  { value: 'afternoon', label: 'Afternoon' },
+  { value: 'nature', label: 'Nature' },
+  { value: 'autumn', label: 'Autumn' },
+  { value: 'winter', label: 'Winter' },
+  { value: 'spring', label: 'Spring' },
+  { value: 'spring', label: 'Summer' },
 ];
 
 const animatedComponents = makeAnimated();
 
-const ButtonModal = styled.div`
-  width: 36px;
-  height: 36px;
-  margin-left: 20px;
+const StyledDescription = styled.div`
+  width: 100%;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: background-color 0.25s ease-in;
-  border-radius: 5px;
-  cursor: pointer;
-  &:hover {
-    background-color: ${({ theme }) => theme.brown2};
-  }
-
-  ${({ close }) =>
-    close &&
-    css`
-      position: fixed;
-      top: 20px;
-      right: 20px;
-    `}
+  color: ${({ theme }) => theme.brown3};
 `;
 
 const Home = () => {
+  const {
+    fetched,
+    tags,
+    favorites,
+    addTags,
+    addFetched,
+    addToFavorites,
+    removeFromFavorites,
+  } = useContext(DataContext);
   const [isModalOpen, setModalOpen] = useState(false);
-  const [tags, setTag] = useState([]);
+  const [hoverIndex, setHoverIndex] = useState(null);
+
+  useEffect(() => {
+    console.log(fetched);
+  }, [fetched]);
 
   const getPhotos = () => {
     axios
       .get(
-        'https://api.unsplash.com/photos/random/?client_id=sdmRXp3xwG4P52UxJ7ETIJBNJp5MCIrLogdUmIOqb6M&count=2&tags=[night]',
+        `https://api.unsplash.com/photos/random/?client_id=sdmRXp3xwG4P52UxJ7ETIJBNJp5MCIrLogdUmIOqb6M&count=6&query=${tags.join(
+          ',',
+        )}`,
       )
-      .then(function (response) {
-        // handle success
-        console.log(response);
-      })
-      .catch(function (error) {
-        // handle error
-        console.log(error);
-      })
-      .finally(function () {
-        // always executed
-      });
+      .then((response) => parseData(response))
+      .then((parsed) => addFetched({ fetched: parsed }))
+      .catch((error) => alert('Failed to load photos from Unsplash service'))
+      .finally(() => setModalOpen(false));
   };
 
-  const addTag = (tags) => {
-    console.log(tags);
-    setTag(tags);
+  const parseData = (data) => {
+    if (data.status === 200) {
+      let myData = [];
+      data.data.forEach((x) => {
+        myData.push({
+          id: x.id,
+          url: x.urls?.regular,
+          firstName: x.user?.first_name,
+          lastName: x.user?.last_name,
+          tags: [...tags],
+        });
+      });
+      return myData;
+    }
   };
+
+  const addTagsToState = (tags) => {
+    tags = [...tags.flatMap((x) => x.value)];
+    addTags({ tags });
+  };
+
   return (
     <PageTemplate>
       <>
         <StyledWrapper>
-          <StyledMansory></StyledMansory>
+          {fetched.length === 0 ? (
+            <StyledDescription>Please, use photo icon on bottom to search photos</StyledDescription>
+          ) : (
+            <StyledMansory>
+              {fetched.map((x, i) => (
+                <StyledMansoryItem
+                  key={x.id}
+                  image={x.url}
+                  onMouseEnter={() => setHoverIndex(i)}
+                  onMouseLeave={() => setHoverIndex(null)}
+                >
+                  <StyledItemHover isVisible={hoverIndex === i}>
+                    <StyledInfo>
+                      <ButtonModal
+                        hearth
+                        onClick={() =>
+                          favorites.find((f) => f.id === x.id)
+                            ? removeFromFavorites({ id: x.id })
+                            : addToFavorites({
+                                id: x.id,
+                                url: x.url,
+                                firstName: x.firstName,
+                                lastName: x.lastName,
+                                tags: tags,
+                              })
+                        }
+                      >
+                        <FontAwesomeIcon
+                          size="1x"
+                          color={theme.brown3}
+                          icon={favorites.find((f) => f.id === x.id) ? faHeart : faHeartEmpty}
+                        />
+                      </ButtonModal>
+                      {`${x.firstName} ${x.lastName}`}
+                    </StyledInfo>
+                  </StyledItemHover>
+                </StyledMansoryItem>
+              ))}
+            </StyledMansory>
+          )}
         </StyledWrapper>
         <ButtonAdd onClick={() => setModalOpen(true)}>
           <FontAwesomeIcon size="3x" color={theme.brown3} icon={faImages} />
@@ -147,13 +187,13 @@ const Home = () => {
             <StyledWrapperInput>
               <StyledInput>
                 <Select
-                  onChange={(tags) => (tags ? addTag([...tags.flatMap((x) => x.value)]) : [])}
+                  onChange={(tags) => (tags ? addTagsToState(tags) : [])}
                   options={options}
                   isMulti
                   components={animatedComponents}
                 />
               </StyledInput>
-              <ButtonModal onClick={() => setModalOpen(false)}>
+              <ButtonModal onClick={() => getPhotos()}>
                 <FontAwesomeIcon size="1x" color={theme.brown3} icon={faSearch} />
               </ButtonModal>
             </StyledWrapperInput>
