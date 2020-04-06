@@ -65,11 +65,15 @@ const ButtonAdd = styled.button`
 const options = [
   { value: 'morning', label: 'Morning' },
   { value: 'afternoon', label: 'Afternoon' },
+  { value: 'night', label: 'Night' },
   { value: 'nature', label: 'Nature' },
   { value: 'autumn', label: 'Autumn' },
   { value: 'winter', label: 'Winter' },
   { value: 'spring', label: 'Spring' },
   { value: 'spring', label: 'Summer' },
+  { value: 'new_york', label: 'New York' },
+  { value: 'sydney', label: 'Sydney' },
+  { value: 'warsaw', label: 'Warsaw' },
 ];
 
 const animatedComponents = makeAnimated();
