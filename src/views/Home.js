@@ -127,7 +127,7 @@ const Home = () => {
       try {
         const getLocation = await axios.get('https://geolocation-db.com/json/');
         const getWeather = await axios.get(
-          `http://api.openweathermap.org/data/2.5/weather?q=${getLocation.data.city}&appid=d5cbcfaa770ee1e8c794f868ef0da232`,
+          `https://api.openweathermap.org/data/2.5/weather?q=${getLocation.data.city}&appid=d5cbcfaa770ee1e8c794f868ef0da232`,
         );
 
         const countryName = getLocation.data.country_name;
