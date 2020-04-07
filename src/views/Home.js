@@ -3,10 +3,17 @@ import { DataContext } from '../context/DataContext';
 import PageTemplate from '../templates/PageTemplate';
 import styled from 'styled-components';
 import axios from 'axios';
-import Select from 'react-select';
+import Select, { components } from 'react-select';
 import makeAnimated from 'react-select/animated';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faImages, faSearch, faTimes, faHeart } from '@fortawesome/free-solid-svg-icons';
+
+import {
+  faImages,
+  faSearch,
+  faTimes,
+  faHeart,
+  faLocationArrow,
+} from '@fortawesome/free-solid-svg-icons';
 import { faHeart as faHeartEmpty } from '@fortawesome/free-regular-svg-icons';
 import { theme } from '../theme/theme';
 import StyledItemHover from '../components/atoms/StyledItemHover';
@@ -62,7 +69,7 @@ const ButtonAdd = styled.button`
   }
 `;
 
-const options = [
+const optionsSelect = [
   { value: 'morning', label: 'Morning' },
   { value: 'afternoon', label: 'Afternoon' },
   { value: 'night', label: 'Night' },
@@ -70,10 +77,15 @@ const options = [
   { value: 'autumn', label: 'Autumn' },
   { value: 'winter', label: 'Winter' },
   { value: 'spring', label: 'Spring' },
-  { value: 'spring', label: 'Summer' },
+  { value: 'summer', label: 'Summer' },
+  { value: 'sunny', label: 'Sunny' },
+  { value: 'cloudy', label: 'Cloudy' },
+  { value: 'rainy', label: 'Rainy' },
   { value: 'new_york', label: 'New York' },
-  { value: 'sydney', label: 'Sydney' },
+  { value: 'dubai', label: 'Dubai' },
   { value: 'warsaw', label: 'Warsaw' },
+  { value: 'australia', label: 'Australia' },
+  { value: 'japan', label: 'Japan' },
 ];
 
 const animatedComponents = makeAnimated();
@@ -87,6 +99,15 @@ const StyledDescription = styled.div`
   color: ${({ theme }) => theme.brown3};
 `;
 
+//settings for Select options
+const { Option } = components;
+const IconOption = (props) => (
+  <Option {...props}>
+    {props.label.includes('@') && <FontAwesomeIcon size="xs" color="#000" icon={faLocationArrow} />}
+    {props.label.includes('@') ? props.label.substr(1) : props.label}
+  </Option>
+);
+
 const Home = () => {
   const {
     fetched,
@@ -99,9 +120,33 @@ const Home = () => {
   } = useContext(DataContext);
   const [isModalOpen, setModalOpen] = useState(false);
   const [hoverIndex, setHoverIndex] = useState(null);
+  const [options, setOptions] = useState(optionsSelect);
 
   useEffect(() => {
-    console.log(fetched);
+    const fetchData = async () => {
+      try {
+        const getLocation = await axios.get('https://geolocation-db.com/json/');
+        const getWeather = await axios.get(
+          `http://api.openweathermap.org/data/2.5/weather?q=${getLocation.data.city}&appid=d5cbcfaa770ee1e8c794f868ef0da232`,
+        );
+
+        const countryName = getLocation.data.country_name;
+        const cityName = getLocation.data.city;
+        let currentWeather = getWeather.data.weather[0].main;
+        currentWeather = currentWeather === 'Clear' ? 'Sunny' : currentWeather;
+
+        setOptions([
+          { value: countryName, label: `@${countryName}` },
+          { value: cityName, label: `@${cityName}` },
+          { value: currentWeather, label: `@${currentWeather}` },
+          ...optionsSelect,
+        ]);
+      } catch (e) {
+        //temporary information for development
+        console.log(e);
+      }
+    };
+    fetchData();
   }, [fetched]);
 
   const getPhotos = () => {
@@ -194,7 +239,7 @@ const Home = () => {
                   onChange={(tags) => (tags ? addTagsToState(tags) : [])}
                   options={options}
                   isMulti
-                  components={animatedComponents}
+                  components={(animatedComponents, { Option: IconOption })}
                 />
               </StyledInput>
               <ButtonModal onClick={() => getPhotos()}>
