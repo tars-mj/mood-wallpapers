@@ -1,15 +1,15 @@
 import styled from 'styled-components';
 
 const StyledItemHover = styled.div`
-  display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
+  display: flex;
   width: 100%;
   height: 100%;
-  background-color: ${({ theme }) => '#000'};
+  background-color: ${({ isVisible }) => (isVisible ? 'rgb(0,0,0, 1)' : 'rgb(0,0,0, 0)')};
   position: absolute;
   top: 0;
   left: 0;
-  opacity: 0;
-  transition: opacity 0.25s ease-out;
+  opacity: ${({ isVisible }) => (isVisible ? '1' : '0')};
+  transition: opacity 0.25s ease-out, background-color 0.25s ease-out;
   justify-content: center;
   align-items: center;
   &:hover {
