@@ -32,8 +32,11 @@ const StyledMansory = styled.div`
   height: 100%;
   display: grid;
   grid-gap: 4px;
-  grid-auto-columns: 1fr;
-  grid-auto-rows: 1fr;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-rows: minmax(0, 1fr);
   grid-template-areas:
     'a b b c'
     'd d e c'

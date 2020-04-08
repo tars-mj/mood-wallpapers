@@ -20,7 +20,7 @@ const GlobalStyle = createGlobalStyle`
 		
 		margin: 0;
 		padding: 0;
-		background-color: ${theme.white};
+		background-color: ${theme.brown1};
   }
 
   button {

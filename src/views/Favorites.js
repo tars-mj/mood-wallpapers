@@ -14,6 +14,7 @@ import { theme } from '../theme/theme';
 const StyledWrapper = styled.div`
   width: 100%;
   height: 100%;
+  overflow-y: scroll;
 `;
 
 const StyledDescription = styled.div`
@@ -30,9 +31,6 @@ const StyledMansory = styled.div`
   grid-template-columns: repeat(auto-fit, 300px);
   grid-auto-rows: 200px;
   grid-gap: 4px;
-  min-height: 0;
-  min-width: 0;
-  overflow: hidden;
   justify-items: center;
   align-items: center;
 `;
