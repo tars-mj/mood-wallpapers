@@ -30,9 +30,11 @@ const StyledMansory = styled.div`
   grid-template-columns: repeat(auto-fit, 300px);
   grid-auto-rows: 200px;
   grid-gap: 4px;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
   justify-items: center;
   align-items: center;
-  overflow: scroll;
 `;
 
 const SmallText = styled.div`
@@ -41,7 +43,6 @@ const SmallText = styled.div`
 
 const Favorites = () => {
   const { tags, favorites, addToFavorites, removeFromFavorites } = useContext(DataContext);
-  const [isModalOpen, setModalOpen] = useState(false);
   const [hoverIndex, setHoverIndex] = useState(null);
 
   return (

@@ -14,9 +14,11 @@ const StyledBoardLayout = styled.div`
   width: 100vw;
   height: 100vh;
   display: grid;
-
-  grid-template-columns: 1fr;
-  grid-template-rows: 60px 1fr;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: 60px minmax(0, 1fr);
   grid-template-areas:
     'menu'
     'main';
@@ -29,17 +31,22 @@ const StyledMenu = styled.div`
 
   background-color: ${({ theme }) => theme.brown1};
   display: grid;
-  grid-template-columns: 60px 60px 1fr;
-  grid-template-rows: 1fr;
+  grid-template-columns: 60px 60px minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
   grid-template-areas: 'btn1 btn2 tags';
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
 `;
 
 const ButtonMenu = styled.div`
   grid-area: ${({ area }) => area || 'btn1'};
   width: 100%;
   height: 100%;
+
   display: grid;
   font-size: 3rem;
+
   display: flex;
   justify-content: center;
   align-items: center;
@@ -76,8 +83,11 @@ const StyledTags = styled.div`
   align-items: center;
   text-transform: capitalize;
   font-family: 'Montserrat';
-
   font-style: italic;
+`;
+
+const StyledMainContent = styled.div`
+  overflow: scroll;
 `;
 
 const PageTemplate = ({ children, location }) => {
@@ -95,7 +105,7 @@ const PageTemplate = ({ children, location }) => {
         </ButtonMenu>
         <StyledTags>{tags.length === 0 ? '...' : tags.join(', ')}</StyledTags>
       </StyledMenu>
-      {children}
+      <StyledMainContent>{children}</StyledMainContent>
     </StyledBoardLayout>
   );
 };
