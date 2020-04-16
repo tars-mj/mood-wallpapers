@@ -111,6 +111,19 @@ const IconOption = (props) => (
   </Option>
 );
 
+// const getCurrentTime = () => {
+//   const hour = new Date().getHours;
+//   const timeOfDay = [
+//     {
+//       night: 0,
+//       morning: 4,
+//       afternoon: 12,
+//       evening: 16,
+//       night: 22,
+//     },
+//   ];
+// };
+
 const Home = () => {
   const {
     fetched,
